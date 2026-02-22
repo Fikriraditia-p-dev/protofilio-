@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio | Fikri Raditia Putra</title>
     <style>
+        /* --- VARIABEL WARNA (Bisa diubah via JS) --- */
         :root {
             --bg-color: #0f172a;
             --text-color: #f8fafc;
@@ -19,29 +20,94 @@
             margin: 0;
             padding: 0;
             line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
+        /* --- MENU GARIS 3 (HAMBURGER) --- */
+        .menu-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            cursor: pointer;
+            background: var(--accent-color);
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .menu-btn span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: #000;
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        /* --- PANEL PENGATUR WARNA (SIDEBAR) --- */
+        .color-panel {
+            position: fixed;
+            top: 0;
+            right: -250px; /* Sembunyi di kanan */
+            width: 200px;
+            height: 100%;
+            background: var(--card-bg);
+            z-index: 999;
+            padding: 80px 20px 20px;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+            transition: 0.4s ease-in-out;
+        }
+
+        .color-panel.active {
+            right: 0;
+        }
+
+        .color-panel h3 {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .control-group input {
+            width: 100%;
+            height: 40px;
+            border: none;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        /* --- STYLE KONTEN (Sama seperti sebelumnya) --- */
         .container {
             max-width: 600px;
             margin: auto;
             padding: 20px;
         }
 
-        header {
-            text-align: center;
-            padding: 40px 0;
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .profile-img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 3px solid var(--accent-color);
-            margin-bottom: 15px;
-        }
-
+        header { text-align: center; padding: 40px 0; animation: fadeInUp 0.8s ease-out forwards; }
+        .profile-img { width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--accent-color); margin-bottom: 15px; transition: 0.4s; }
+        .profile-img:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 0 15px var(--accent-color); }
         h1 { margin: 10px 0; font-size: 1.8rem; }
-        p.subtitle { color: var(--accent-color); font-weight: bold; }
+        .subtitle { color: var(--accent-color); font-weight: bold; }
 
         .card {
             background: var(--card-bg);
@@ -49,8 +115,16 @@
             border-radius: 15px;
             margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+            transition: 0.3s;
         }
+        .card:nth-of-type(1) { animation-delay: 0.2s; }
+        .card:nth-of-type(2) { animation-delay: 0.4s; }
+        .card:nth-of-type(3) { animation-delay: 0.6s; }
+        .card:nth-of-type(4) { animation-delay: 0.8s; }
 
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
         h2 { border-left: 4px solid var(--accent-color); padding-left: 10px; font-size: 1.2rem; }
 
         .skills span {
@@ -60,14 +134,9 @@
             border-radius: 20px;
             font-size: 14px;
             margin: 5px 2px;
+            transition: 0.2s;
         }
-
-        .footer {
-            text-align: center;
-            font-size: 0.8rem;
-            color: #94a3b8;
-            margin-top: 40px;
-        }
+        .skills span:hover { background: var(--accent-color); color: #000; transform: scale(1.1); }
 
         a.btn {
             display: block;
@@ -75,14 +144,37 @@
             background: var(--accent-color);
             color: #000;
             text-decoration: none;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
             font-weight: bold;
             margin-top: 10px;
+            transition: 0.2s;
         }
+        a.btn:hover { background-color: #0284c7; color: #fff; transform: scale(1.02); }
+
+        .footer { text-align: center; font-size: 0.8rem; color: #94a3b8; margin-top: 40px; opacity: 0; animation: fadeInUp 0.8s ease-out 1s forwards; }
     </style>
 </head>
 <body>
+
+<div class="menu-btn" onclick="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
+<div class="color-panel" id="colorPanel">
+    <h3>Custom Theme</h3>
+    <div class="control-group">
+        <label>Background Color</label>
+        <input type="color" id="bgPicker" value="#0f172a">
+    </div>
+    <div class="control-group">
+        <label>Text Color</label>
+        <input type="color" id="textPicker" value="#f8fafc">
+    </div>
+    <p style="font-size: 10px; color: #94a3b8;">*Warna akan berubah otomatis saat kamu memilih.</p>
+</div>
 
 <div class="container">
     <header>
@@ -109,14 +201,41 @@
 
     <div class="card">
         <h2>My Projects</h2>
-        <p>Sedang mengembangkan plugin TheoTown dan belajar membuat landing page yang responsif.</p>
-        <a href="https://instagram.com/USERNAME_KAMU" class="btn">Follow My Journey</a>
+        <p>Sedang mengembangkan plugin TheoTown dan belajar membuat landing page yang responsif. Klik tombol di bawah untuk mengunjungi TikTok saya.</p>
+        <a href="https://www.tiktok.com/@gtfelaina?_r=1&_t=ZS-947huw71Nzz" class="btn">Follow My Journey</a>
+    </div>
+
+    <div class="card">
+        <h2>Current Vibes 🎧</h2>
+        <iframe style="border-radius:12px; margin-top: 10px;" src="https://open.spotify.com/embed/playlist/2ZAvDrZosXp7X7lrpzjXXg?si=RieUqf9ISCK9GcFTu09Mig" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
     </div>
 
     <div class="footer">
         <p>© 2026 Crafted by Fikri. Built with Acode.</p>
     </div>
 </div>
+
+<script>
+    // Fungsi untuk buka-tutup menu
+    function toggleMenu() {
+        document.getElementById('colorPanel').classList.toggle('active');
+    }
+
+    // Ambil elemen input warna
+    const bgPicker = document.getElementById('bgPicker');
+    const textPicker = document.getElementById('textPicker');
+    const root = document.documentElement;
+
+    // Deteksi perubahan warna Background
+    bgPicker.addEventListener('input', (e) => {
+        root.style.setProperty('--bg-color', e.target.value);
+    });
+
+    // Deteksi perubahan warna Text
+    textPicker.addEventListener('input', (e) => {
+        root.style.setProperty('--text-color', e.target.value);
+    });
+</script>
 
 </body>
 </html>
