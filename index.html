@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio | Fikri Raditia Putra</title>
     <style>
-        /* --- VARIABEL WARNA (Bisa diubah via JS) --- */
+        /* --- VARIABEL WARNA --- */
         :root {
             --bg-color: #0f172a;
             --text-color: #f8fafc;
@@ -22,6 +22,11 @@
             line-height: 1.6;
             overflow-x: hidden;
             transition: background-color 0.3s ease, color 0.3s ease;
+            /* Tambahan agar background foto terlihat bagus */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
         }
 
         /* --- MENU GARIS 3 (HAMBURGER) --- */
@@ -49,18 +54,19 @@
             transition: 0.3s;
         }
 
-        /* --- PANEL PENGATUR WARNA (SIDEBAR) --- */
+        /* --- PANEL PENGATUR (SIDEBAR) --- */
         .color-panel {
             position: fixed;
             top: 0;
-            right: -250px; /* Sembunyi di kanan */
-            width: 200px;
+            right: -250px; 
+            width: 220px;
             height: 100%;
             background: var(--card-bg);
             z-index: 999;
             padding: 80px 20px 20px;
             box-shadow: -5px 0 15px rgba(0,0,0,0.5);
             transition: 0.4s ease-in-out;
+            overflow-y: auto;
         }
 
         .color-panel.active {
@@ -83,7 +89,14 @@
             margin-bottom: 5px;
         }
 
-        .control-group input {
+        /* Style khusus input file agar rapi */
+        .control-group input[type="file"] {
+            width: 100%;
+            font-size: 12px;
+            color: var(--text-color);
+        }
+
+        .control-group input[type="color"] {
             width: 100%;
             height: 40px;
             border: none;
@@ -91,11 +104,13 @@
             background: transparent;
         }
 
-        /* --- STYLE KONTEN (Sama seperti sebelumnya) --- */
+        /* --- STYLE KONTEN --- */
         .container {
             max-width: 600px;
             margin: auto;
             padding: 20px;
+            position: relative;
+            z-index: 1;
         }
 
         @keyframes fadeInUp {
@@ -104,13 +119,14 @@
         }
 
         header { text-align: center; padding: 40px 0; animation: fadeInUp 0.8s ease-out forwards; }
-        .profile-img { width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--accent-color); margin-bottom: 15px; transition: 0.4s; }
+        .profile-img { width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--accent-color); margin-bottom: 15px; transition: 0.4s; object-fit: cover; }
         .profile-img:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 0 15px var(--accent-color); }
-        h1 { margin: 10px 0; font-size: 1.8rem; }
-        .subtitle { color: var(--accent-color); font-weight: bold; }
+        h1 { margin: 10px 0; font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .subtitle { color: var(--accent-color); font-weight: bold; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
 
         .card {
-            background: var(--card-bg);
+            background: rgba(30, 41, 59, 0.85); /* Dibuat sedikit transparan agar foto terlihat */
+            backdrop-filter: blur(10px); /* Efek blur di belakang kartu */
             padding: 20px;
             border-radius: 15px;
             margin-bottom: 20px;
@@ -118,13 +134,14 @@
             opacity: 0;
             animation: fadeInUp 0.8s ease-out forwards;
             transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
         }
         .card:nth-of-type(1) { animation-delay: 0.2s; }
         .card:nth-of-type(2) { animation-delay: 0.4s; }
         .card:nth-of-type(3) { animation-delay: 0.6s; }
         .card:nth-of-type(4) { animation-delay: 0.8s; }
 
-        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.5); border-color: var(--accent-color); }
         h2 { border-left: 4px solid var(--accent-color); padding-left: 10px; font-size: 1.2rem; }
 
         .skills span {
@@ -152,7 +169,7 @@
         }
         a.btn:hover { background-color: #0284c7; color: #fff; transform: scale(1.02); }
 
-        .footer { text-align: center; font-size: 0.8rem; color: #94a3b8; margin-top: 40px; opacity: 0; animation: fadeInUp 0.8s ease-out 1s forwards; }
+        .footer { text-align: center; font-size: 0.8rem; color: #f8fafc; margin-top: 40px; opacity: 0; animation: fadeInUp 0.8s ease-out 1s forwards; text-shadow: 1px 1px 2px #000; }
     </style>
 </head>
 <body>
@@ -165,15 +182,23 @@
 
 <div class="color-panel" id="colorPanel">
     <h3>Custom Theme</h3>
+    
     <div class="control-group">
-        <label>Background Color</label>
+        <label>🖼️ Background Foto (Galeri)</label>
+        <input type="file" id="imagePicker" accept="image/*">
+    </div>
+
+    <div class="control-group">
+        <label>🎨 Background Warna</label>
         <input type="color" id="bgPicker" value="#0f172a">
     </div>
+
     <div class="control-group">
-        <label>Text Color</label>
+        <label>✍️ Warna Teks</label>
         <input type="color" id="textPicker" value="#f8fafc">
     </div>
-    <p style="font-size: 10px; color: #94a3b8;">*Warna akan berubah otomatis saat kamu memilih.</p>
+
+    <p style="font-size: 10px; color: #94a3b8;">*Pilih foto untuk mengganti background dari galeri kamu.</p>
 </div>
 
 <div class="container">
@@ -216,18 +241,30 @@
 </div>
 
 <script>
-    // Fungsi untuk buka-tutup menu
     function toggleMenu() {
         document.getElementById('colorPanel').classList.toggle('active');
     }
 
-    // Ambil elemen input warna
     const bgPicker = document.getElementById('bgPicker');
     const textPicker = document.getElementById('textPicker');
+    const imagePicker = document.getElementById('imagePicker');
     const root = document.documentElement;
 
-    // Deteksi perubahan warna Background
+    // Logika Mengubah Background Menjadi Foto Galeri
+    imagePicker.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.body.style.backgroundImage = `url(${e.target.result})`;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Deteksi perubahan warna Background (Akan menghapus foto background jika warna dipilih)
     bgPicker.addEventListener('input', (e) => {
+        document.body.style.backgroundImage = 'none';
         root.style.setProperty('--bg-color', e.target.value);
     });
 
